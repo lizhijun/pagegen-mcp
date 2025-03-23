@@ -1,0 +1,24 @@
+{
+  "name": "mcp",
+  "version": "1.0.0",
+  "description": "MCP网页生成器",
+  "scripts": {
+    "start:server": "cd server && npm run dev",
+    "start:client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "build": "concurrently \"cd server && npm run build\" \"cd client && npm run build\"",
+    "setup": "npm install && concurrently \"cd server && npm install\" \"cd client && npm install\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "webpage",
+    "generator",
+    "openai"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 
