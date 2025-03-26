@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import { generateRouter } from './routes/generate';
 import { githubRouter } from './routes/github';
 import { uploadRouter } from './routes/upload';
+import { bookRouter } from './routes/book';
 
 // 加载环境变量
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 app.use('/api/generate', generateRouter);
 app.use('/api/github', githubRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/books', bookRouter);
 
 // 健康检查端点
 app.get('/health', (req, res) => {
