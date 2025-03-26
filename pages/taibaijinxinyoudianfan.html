@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《太白金星有点烦》 - 现代神话解构力作</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #f59e0b;
+            --secondary-dark: #d97706;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: var(--light);
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+        
+        .dark body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 700;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(59,130,246,0.8) 0%, rgba(245,158,11,0.8) 100%);
+        }
+        
+        .drop-cap::first-letter {
+            float: left;
+            font-size: 4.5rem;
+            line-height: 0.65;
+            margin: 0.1em 0.2em 0.1em 0;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .quote-decoration {
+            position: relative;
+        }
+        
+        .quote-decoration::before {
+            content: """;
+            position: absolute;
+            top: -1.5rem;
+            left: -1.5rem;
+            font-size: 5rem;
+            color: rgba(245, 158, 11, 0.2);
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        .quote-decoration::after {
+            content: """;
+            position: absolute;
+            bottom: -3rem;
+            right: -1.5rem;
+            font-size: 5rem;
+            color: rgba(245, 158, 11, 0.2);
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- 深色/浅色模式切换按钮 -->
+    <button id="theme-toggle" class="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl transition-all duration-300">
+        <i class="fas fa-moon text-gray-800 dark:text-yellow-300 dark:hidden"></i>
+        <i class="fas fa-sun text-yellow-300 hidden dark:block"></i>
+    </button>
+
+    <!-- 导航栏 -->
+    <nav class="bg-white dark:bg-slate-900 shadow-md sticky top-0 z-40 transition-colors duration-300">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center">
+                <i class="fas fa-book-open mr-2"></i>
+                <span>文渊阁</span>
+            </a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#about" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">作品简介</a>
+                <a href="#highlights" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">亮点解析</a>
+                <a href="#characters" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">人物关系</a>
+                <a href="#author" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">关于作者</a>
+                <a href="#recommendations" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">延伸阅读</a>
+            </div>
+            <button class="md:hidden text-gray-700 dark:text-gray-300" id="mobile-menu-button">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white dark:bg-slate-900 px-4 py-2 shadow-lg" id="mobile-menu">
+            <a href="#about" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">作品简介</a>
+            <a href="#highlights" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">亮点解析</a>
+            <a href="#characters" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">人物关系</a>
+            <a href="#author" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">关于作者</a>
+            <a href="#recommendations" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition">延伸阅读</a>
+        </div>
+    </nav>
+
+    <!-- Hero 模块 -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-50 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80" 
+             alt="神话背景" class="absolute w-full h-full object-cover object-center">
+        <div class="relative z-20 text-center px-4 max-w-4xl">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 fade-in">《太白金星有点烦》</h1>
+            <p class="text-xl md:text-2xl text-yellow-200 mb-8 fade-in">一部颠覆传统的神仙职场生存指南</p>
+            <div class="quote-decoration relative max-w-3xl mx-auto px-8 py-6 bg-white dark:bg-slate-800 bg-opacity-20 dark:bg-opacity-20 backdrop-blur-sm rounded-lg">
+                <p class="text-lg md:text-xl italic text-white">"天庭不是净土，神仙也有烦恼。当太白金星遇上取经项目，一场关于职场、人情与自我救赎的现代神话就此展开..."</p>
+            </div>
+            <a href="#about" class="mt-12 inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition duration-300 transform hover:scale-105">
+                探索作品 <i class="fas fa-arrow-down ml-2"></i>
+            </a>
+        </div>
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 scroll-indicator">
+            <i class="fas fa-angle-double-down text-3xl text-white opacity-70"></i>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="container mx-auto px-4 py-12 md:py-16">
+        <!-- 作品简介 -->
+        <section id="about" class="mb-20 scroll-mt-16">
+            <div class="flex items-center mb-8">
+                <div class="h-1 bg-blue-600 dark:bg-blue-400 w-12 mr-4"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">作品简介</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center mb-12">
+                <div class="order-2 md:order-1">
+                    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6 drop-cap">《太白金星有点烦》是马伯庸创作的一部以中国传统神话为背景的现代寓言小说。作品以天庭神仙太白金星为主角，通过他参与"西天取经"项目筹备工作的经历，巧妙地将现代职场生态与古典神话相结合，展现了一个既熟悉又陌生的神仙世界。</p>
+                    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">小说以幽默诙谐的笔触，揭示了天庭这个看似超然物外的神仙机构背后复杂的人情世故和权力运作。太白金星作为天庭中层干部，既要应对上级领导的压力，又要协调各方关系，还要处理各种突发事件，其处境与现代职场人惊人地相似。</p>
+                    <p class="text-lg text-gray-700 dark:text-gray-300">作品通过对传统神话人物的现代化解读，不仅颠覆了读者对神仙的固有印象，更以神仙视角反观人间百态，引发对现实社会的深刻思考。</p>
+                </div>
+                <div class="order-1 md:order-2">
+                    <div class="relative rounded-xl overflow-hidden shadow-xl card-hover">
+                        <img src="https://images.unsplash.com/photo-1549558549-415fe4c37b60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1418&q=80" 
+                             alt="太白金星形象" class="w-full h-auto object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
+                        <div class="absolute bottom-0 left-0 p-6 text-white">
+                            <h3 class="text-2xl font-bold mb-2">太白金星</h3>
+                            <p class="text-yellow-200">天庭资深神仙，取经项目协调人</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 dark:bg-slate-800 rounded-xl p-8 md:p-10 shadow-inner">
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-3xl text-blue-600 dark:text-blue-400 mr-4 mt-1"></i>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">核心主题</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm">
+                                <i class="fas fa-briefcase text-blue-600 dark:text-blue-400 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800 dark:text-white mb-1">职场生态</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">神仙机构的官僚体系与职场法则</p>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm">
+                                <i class="fas fa-mask text-orange-500 dark:text-orange-400 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800 dark:text-white mb-1">身份认同</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">神仙在现代社会中的角色困惑</p>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm">
+                                <i class="fas fa-balance-scale text-green-600 dark:text-green-400 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800 dark:text-white mb-1">权力反思</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">天庭权力运作的荒诞与真实</p>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700 p-4 rounded-lg shadow-sm">
+                                <i class="fas fa-laugh-beam text-yellow-500 dark:text-yellow-400 text-2xl mb-2"></i>
+                                <h4 class="font-semibold text-gray-800 dark:text-white mb-1">幽默解构</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">传统神话的现代喜剧演绎</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 亮点解析 -->
+        <section id="highlights" class="mb-20 scroll-mt-16">
+            <div class="flex items-center mb-8">
+                <div class="h-1 bg-orange-500 dark:bg-orange-400 w-12 mr-4"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">亮点解析</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-md card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1673&q=80" 
+                             alt="创意改编" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-lightbulb text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">神话新解</h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300">作品对《西游记》等传统神话进行了大胆而巧妙的现代改编，将天庭描绘成一个充满现代职场气息的官僚机构，神仙们也有着与凡人相似的烦恼和欲望。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-md card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80" 
+                             alt="职场隐喻" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-user-tie text-orange-600 dark:text-orange-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">职场隐喻</h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300">小说将天庭的运作机制与现代职场完美对应，从项目策划、部门协调到绩效考核，处处体现着现代职场的生存法则，让读者在会心一笑中产生强烈共鸣。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-md card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1508784411316-02b8cd4d3a3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80" 
+                             alt="幽默风格" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-laugh-squint text-yellow-600 dark:text-yellow-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">幽默风格</h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300">作者以轻松幽默的笔调讲述故事，将严肃的社会议题包裹在妙趣横生的情节中，让读者在笑声中思考，形成了独特的"马氏幽默"风格。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-orange-50 dark:bg-slate-800 rounded-xl p-8 md:p-10 shadow-inner">
+                <div class="flex items-start">
+                    <i class="fas fa-quote-left text-3xl text-orange-500 dark:text-orange-400 mr-4 mt-1 opacity-30"></i>
+                    <div>
+                        <blockquote class="text-xl italic text-gray-700 dark:text-gray-300 mb-6">
+                            "天庭的会议比人间的还多，文件比凡间的还厚，流程比下界的还复杂。太白金星常常想，这大概就是长生不老的代价——你得永远忍受这些无聊的折磨。"
+                        </blockquote>
+                        <div class="flex justify-end">
+                            <div class="text-right">
+                                <p class="font-semibold text-gray-800 dark:text-white">——《太白金星有点烦》</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">第一章 天庭项目启动会</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 人物关系 -->
+        <section id="characters" class="mb-20 scroll-mt-16">
+            <div class="flex items-center mb-8">
+                <div class="h-1 bg-purple-600 dark:bg-purple-400 w-12 mr-4"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">人物关系图谱</h2>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 md:p-6 mb-12">
+                <div class="mermaid">
+                    graph TD
+                        A[太白金星] -->|项目负责人| B(玉皇大帝)
+                        A -->|协调合作| C(观音菩萨)
+                        A -->|监督指导| D(如来佛祖)
+                        A -->|下属| E(孙悟空)
+                        A -->|下属| F(猪八戒)
+                        A -->|下属| G(沙僧)
+                        A -->|下属| H(唐僧)
+                        B -->|命令| I[天庭各部门]
+                        C -->|协助| J[西天取经团队]
+                        D -->|授权| K[取经项目]
+                        E -->|对抗| L[各路妖怪]
+                        F -->|调停| L
+                        G -->|协助| H
+                        H -->|领导| J
+                        
+                        style A fill:#3b82f6,color:#fff,stroke:#1d4ed8
+                        style B fill:#8b5cf6,color:#fff,stroke:#6d28d9
+                        style C fill:#ec4899,color:#fff,stroke:#be185d
+                        style D fill:#f59e0b,color:#fff,stroke:#d97706
+                        style E fill:#10b981,color:#fff,stroke:#059669
+                        style F fill:#ef4444,color:#fff,stroke:#dc2626
+                        style G fill:#64748b,color:#fff,stroke:#475569
+                        style H fill:#84cc16,color:#fff,stroke:#65a30d
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-purple-50 dark:bg-slate-800 rounded-xl p-6 shadow-inner">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-user-astronaut text-purple-600 dark:text-purple-400 mr-3"></i>
+                        主要角色分析
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="bg-purple-100 dark:bg-purple-900 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-purple-600 dark:text-purple-400 font-bold">1</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">太白金星</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">天庭资深神仙，取经项目协调人，擅长周旋于各方势力之间，是现代职场中层管理者的神话写照。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-purple-100 dark:bg-purple-900 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-purple-600 dark:text-purple-400 font-bold">2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">孙悟空</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">能力出众但桀骜不驯的"问题员工"，与太白金星既有冲突又有默契，代表职场中的技术骨干。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-purple-100 dark:bg-purple-900 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-purple-600 dark:text-purple-400 font-bold">3</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">玉皇大帝</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">天庭CEO，关注大局但常被琐事困扰，象征高层领导的困境与无奈。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-project-diagram text-blue-600 dark:text-blue-400 mr-3"></i>
+                        权力结构解析
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 dark:bg-blue-900 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-sitemap text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">天庭官僚体系</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">等级森严，程序繁琐，各部门互相推诿，反映了大型组织的通病。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 dark:bg-blue-900 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-handshake text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">佛道合作关系</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">如来佛祖与玉皇大帝的权力平衡，观音菩萨的中介角色，展现了跨部门合作的复杂性。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 dark:bg-blue-900 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-users text-yellow-600 dark:text-yellow-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">取经团队动态</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">师徒四人各怀心思，太白金星需巧妙平衡各方利益，如同管理一个多元化团队。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于作者 -->
+        <section id="author" class="mb-20 scroll-mt-16">
+            <div class="flex items-center mb-8">
+                <div class="h-1 bg-green-600 dark:bg-green-400 w-12 mr-4"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">关于作者</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="md:col-span-2">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">马伯庸</h3>
+                    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">中国当代著名作家，素有"文字鬼才"之称。1978年出生于内蒙古，成长于上海，现居北京。其作品涵盖历史、奇幻、悬疑等多个领域，以独特的想象力和扎实的考据著称。</p>
+                    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">马伯庸擅长将历史与现代元素巧妙融合，创造出既熟悉又陌生的叙事世界。《太白金星有点烦》延续了他一贯的创作风格，将传统神话解构重组，赋予其现代意义。</p>
+                    <div class="bg-green-50 dark:bg-slate-800 rounded-lg p-6">
+                        <h4 class="font-bold text-gray-800 dark:text-white mb-3 flex items-center">
+                            <i class="fas fa-award text-green-600 dark:text-green-400 mr-2"></i>
+                            代表作品
+                        </h4>
+                        <ul class="grid grid-cols-2 gap-2">
+                            <li class="flex items-center">
+                                <i class="fas fa-book text-green-500 dark:text-green-400 mr-2 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">《长安十二时辰》</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-book text-green-500 dark:text-green-400 mr-2 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">《古董局中局》</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-book text-green-500 dark:text-green-400 mr-2 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">《风起陇西》</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-book text-green-500 dark:text-green-400 mr-2 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">《显微镜下的大明》</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg card-hover">
+                        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                             alt="马伯庸" class="w-full h-auto object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">马伯庸</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-3">作家、编剧</p>
+                            <div class="flex space-x-4">
+                                <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                    <i class="fab fa-weibo text-xl"></i>
+                                </a>
+                                <a href="#" class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300">
+                                    <i class="fab fa-weixin text-xl"></i>
+                                </a>
+                                <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300">
+                                    <i class="fas fa-globe text-xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden">
+                <div class="grid md:grid-cols-2">
+                    <div class="p-8 md:p-10">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">创作风格解析</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="bg-green-100 dark:bg-green-900 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 flex-shrink-0">
+                                    <i class="fas fa-check text-green-600 dark:text-green-400 text-xs"></i>
+                                </div>
+                                <p class="text-gray-700 dark:text-gray-300">将历史与想象完美融合，创造虚实交织的叙事世界</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-green-100 dark:bg-green-900 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 flex-shrink-0">
+                                    <i class="fas fa-check text-green-600 dark:text-green-400 text-xs"></i>
+                                </div>
+                                <p class="text-gray-700 dark:text-gray-300">擅长从小人物视角切入宏大历史背景</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-green-100 dark:bg-green-900 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 flex-shrink-0">
+                                    <i class="fas fa-check text-green-600 dark:text-green-400 text-xs"></i>
+                                </div>
+                                <p class="text-gray-700 dark:text-gray-300">语言幽默犀利，富有现代感和网感</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-green-100 dark:bg-green-900 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-1 flex-shrink-0">
+                                    <i class="fas fa-check text-green-600 dark:text-green-400 text-xs"></i>
+                                </div>
+                                <p class="text-gray-700 dark:text-gray-300">注重细节考据，在虚构中追求真实感</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-600 dark:bg-green-800 p-8 md:p-10 flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-quote-right text-5xl text-white opacity-20 mb-6"></i>
+                            <blockquote class="text-xl italic text-white mb-6">
+                                "我写神仙，其实是在写人；我写天庭，其实是在写人间。"
+                            </blockquote>
+                            <p class="text-white font-semibold">—— 马伯庸谈《太白金星有点烦》</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 延伸阅读 -->
+        <section id="recommendations" class="scroll-mt-16">
+            <div class="flex items-center mb-8">
+                <div class="h-1 bg-red-600 dark:bg-red-400 w-12 mr-4"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">延伸阅读</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                             alt="西游记" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">《西游记》原著</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">了解传统神话原型，对比马伯庸的现代解构。</p>
+                        <a href="#" class="inline-flex items-center text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium">
+                            了解更多 <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                             alt="职场书籍" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">《天庭职场生存指南》</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">从管理学角度解读神话人物的职场智慧。</p>
+                        <a href="#" class="inline-flex items-center text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium">
+                            了解更多 <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1531346878377-a5be20888e57?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                             alt="幽默文学" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">《中国神话的现代诠释》</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">探讨传统文化在现代文学中的创新表达。</p>
+                        <a href="#" class="inline-flex items-center text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium">
+                            了解更多 <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-red-50 dark:bg-slate-800 rounded-xl p-8 shadow-inner">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+                    <i class="fas fa-graduation-cap text-red-600 dark:text-red-400 mr-3"></i>
+                    相关研究资源
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-800 dark:text-white mb-2">学术论文</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-file-alt text-red-500 dark:text-red-400 mr-2 mt-1 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">《从〈太白金星有点烦〉看当代神话叙事的解构与重构》</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-file-alt text-red-500 dark:text-red-400 mr-2 mt-1 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">《职场文化在神话改编作品中的隐喻表达》</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 dark:text-white mb-2">在线课程</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-video text-red-500 dark:text-red-400 mr-2 mt-1 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">"马伯庸的文学世界"系列讲座</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-video text-red-500 dark:text-red-400 mr-2 mt-1 text-sm"></i>
+                                <span class="text-gray-700 dark:text-gray-300">"中国传统神话的现代改编"工作坊</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4">文渊阁</h3>
+                    <p class="mb-4">探索文学之美，发现思想之光。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-bilibili text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-zhihu text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition">首页</a></li>
+                        <li><a href="#" class="hover:text-white transition">图书推荐</a></li>
+                        <li><a href="#" class="hover:text-white transition">作家专栏</a></li>
+                        <li><a href="#" class="hover:text-white transition">文学评论</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">资源中心</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition">电子书下载</a></li>
+                        <li><a href="#" class="hover:text-white transition">有声读物</a></li>
+                        <li><a href="#" class="hover:text-white transition">读书笔记</a></li>
+                        <li><a href="#" class="hover:text-white transition">阅读工具</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">联系我们</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope mt-1 mr-2 text-sm"></i>
+                            <span>contact@wenyuange.com</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt mt-1 mr-2 text-sm"></i>
+                            <span>400-123-4567</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-2 text-sm"></i>
+                            <span>北京市朝阳区文学路88号</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p>© 2025 文渊阁 - 版权所有</p>
+                <div class="mt-4 md:mt-0">
+                    <a href="https://www.xiaodushu.com/page/" class="text-blue-400 hover:text-blue-300">首页</a>
+                    <span class="mx-2">|</span>
+                    <a href="#" class="text-blue-400 hover:text-blue-300">隐私政策</a>
+                    <span class="mx-2">|</span>
+                    <a href="#" class="text-blue-400 hover:text-blue-300">使用条款</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 深色/浅色模式切换
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        // 检查本地存储或系统偏好
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        
+        // 切换主题
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+        
+        // 移动端菜单切换
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // 如果是移动端菜单，点击后隐藏菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Mermaid 图表初始化
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            securityLevel: 'loose'
+        });
+        
+        // 监听系统主题变化
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('theme') === null) {
+                if (e.matches) {
+                    html.classList.add('dark');
+                } else {
+                    html.classList.remove('dark');
+                }
+                // 重新初始化Mermaid以应用新主题
+                mermaid.initialize({
+                    theme: e.matches ? 'dark' : 'default'
+                });
+            }
+        });
+        
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

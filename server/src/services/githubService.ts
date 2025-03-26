@@ -10,7 +10,7 @@ interface GitHubUploadParams {
   owner: string;
   repo: string;
   path: string;
-  content: string;
+  content: string | Buffer;
   message: string;
 }
 
@@ -22,6 +22,11 @@ interface GitHubUploadParams {
 export const uploadToGitHub = async (params: GitHubUploadParams): Promise<any> => {
   try {
     const { owner, repo, path, content, message } = params;
+
+    // 将内容转换为 base64
+    const contentBase64 = Buffer.isBuffer(content) 
+      ? content.toString('base64')
+      : Buffer.from(content).toString('base64');
 
     // 首先检查文件是否已存在
     try {
@@ -43,7 +48,7 @@ export const uploadToGitHub = async (params: GitHubUploadParams): Promise<any> =
         `${GITHUB_API_URL}/repos/${owner}/${repo}/contents/${path}`,
         {
           message,
-          content: Buffer.from(content).toString('base64'),
+          content: contentBase64,
           sha
         },
         {
@@ -62,7 +67,7 @@ export const uploadToGitHub = async (params: GitHubUploadParams): Promise<any> =
           `${GITHUB_API_URL}/repos/${owner}/${repo}/contents/${path}`,
           {
             message,
-            content: Buffer.from(content).toString('base64')
+            content: contentBase64
           },
           {
             headers: {
