@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 // API基础URL
-const API_BASE_URL = 'http://localhost:3001/api';
+// const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'https://api.willwayai.com/api';
 
 // 网页生成API
 export const generateWebpage = async (prompt: string, theme?: string) => {
