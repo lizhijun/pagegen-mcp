@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { generateRouter } from './routes/generate';
+import { githubRouter } from './routes/github';
 
 // 加载环境变量
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 
 // 路由
 app.use('/api/generate', generateRouter);
+app.use('/api/github', githubRouter);
 
 // 健康检查端点
 app.get('/health', (req, res) => {
