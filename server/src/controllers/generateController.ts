@@ -1,18 +1,27 @@
 import { Request, Response } from 'express';
 import { generateHtml } from '../services/openaiService';
+import { generateHtmlWithDeepseek } from '../services/deepseekService';
 
 // 处理网页生成请求
 export const generateWebpage = async (req: Request, res: Response) => {
   try {
-    const { prompt, theme } = req.body;
+    const { prompt, theme, model = 'openai' } = req.body;
     
     // 验证输入
     if (!prompt) {
       return res.status(400).json({ error: '缺少prompt参数' });
     }
     
-    // 调用OpenAI服务生成HTML
-    const htmlContent = await generateHtml(prompt, theme);
+    let htmlContent: string;
+    
+    // 根据model参数选择使用哪个服务
+    if (model === 'deepseek') {
+      // 调用DeepSeek服务生成HTML
+      htmlContent = await generateHtmlWithDeepseek(prompt, theme);
+    } else {
+      // 默认调用OpenAI服务生成HTML
+      htmlContent = await generateHtml(prompt, theme);
+    }
     
     // 返回生成的HTML
     res.status(200).json({ html: htmlContent });
