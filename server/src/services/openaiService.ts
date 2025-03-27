@@ -72,7 +72,9 @@ export const generateHtml = async (prompt: string, theme?: string, model?: strin
 
 **输出要求：**
 
-*   提供一个完整、可运行的单一 HTML 文件，其中包含所有必要的 CSS 和 JavaScript。
+*   直接输出完整的HTML代码，不要包含任何Markdown格式（如\`\`\`html\`\`\`代码块）。
+*   不要包含任何解释、说明或前后的额外文字。
+*   只输出可直接运行的HTML代码，包含所有必要的CSS和JavaScript。
 *   确保代码符合 W3C 标准，没有错误或警告。
 *   底部的版权信息年份为2025年, 添加首页链接：https://www.xiaodushu.com/page/
 
@@ -104,10 +106,8 @@ export const generateHtml = async (prompt: string, theme?: string, model?: strin
     // 提取生成的HTML
     const htmlContent = response.data.choices[0]?.message?.content || '';
     
-    // 如果返回的是Markdown代码块，提取HTML内容
-    const htmlMatch = htmlContent.match(/```html\n([\s\S]*?)\n```/);
-    
-    return htmlMatch ? htmlMatch[1] : htmlContent;
+    // 直接返回内容，不再需要提取markdown代码块
+    return htmlContent;
   } catch (error) {
     console.error('OpenRouter API调用失败:', error);
     throw new Error('生成HTML时出错');
@@ -179,7 +179,9 @@ export const generateHtmlStreaming = async (prompt: string, res: Response, theme
 
 **输出要求：**
 
-*   提供一个完整、可运行的单一 HTML 文件，其中包含所有必要的 CSS 和 JavaScript。
+*   直接输出完整的HTML代码，不要包含任何Markdown格式（如\`\`\`html\`\`\`代码块）。
+*   不要包含任何解释、说明或前后的额外文字。
+*   只输出可直接运行的HTML代码，包含所有必要的CSS和JavaScript。
 *   确保代码符合 W3C 标准，没有错误或警告。
 *   底部的版权信息年份为2025年, 添加首页链接：https://www.xiaodushu.com/page/
 
@@ -232,13 +234,8 @@ export const generateHtmlStreaming = async (prompt: string, res: Response, theme
               if (content) {
                 fullContent += content;
                 
-                // 尝试从当前累积的内容中提取HTML部分
-                const match = fullContent.match(/```html\n([\s\S]*?)(\n```|$)/);
-                if (match) {
-                  htmlContent = match[1];
-                } else {
-                  htmlContent = fullContent;
-                }
+                // 直接使用累积的内容，不再需要提取markdown代码块
+                htmlContent = fullContent;
                 
                 // 向客户端发送事件
                 res.write(`data: ${JSON.stringify({ html: htmlContent })}\n\n`);
