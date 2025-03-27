@@ -5,7 +5,7 @@ import { generateHtmlWithDeepseek } from '../services/deepseekService';
 // 处理网页生成请求
 export const generateWebpage = async (req: Request, res: Response) => {
   try {
-    const { prompt, theme, model = 'openai' } = req.body;
+    const { prompt, theme, platform = 'deepseek', model = 'anthropic/claude-3.7-sonnet:thinking' } = req.body;
     
     // 验证输入
     if (!prompt) {
@@ -15,12 +15,12 @@ export const generateWebpage = async (req: Request, res: Response) => {
     let htmlContent: string;
     
     // 根据model参数选择使用哪个服务
-    if (model === 'deepseek') {
+    if (platform === 'deepseek') {
       // 调用DeepSeek服务生成HTML
       htmlContent = await generateHtmlWithDeepseek(prompt, theme);
     } else {
       // 默认调用OpenAI服务生成HTML
-      htmlContent = await generateHtml(prompt, theme);
+      htmlContent = await generateHtml(prompt, theme, model);
     }
     
     // 返回生成的HTML

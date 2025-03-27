@@ -6,6 +6,8 @@ import './HomePage.css';
 const HomePage: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [theme, setTheme] = useState('');
+  const [platform, setPlatform] = useState('deepseek');
+  const [model, setModel] = useState('anthropic/claude-3.7-sonnet:thinking');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const HomePage: React.FC = () => {
     setError('');
     
     try {
-      const result = await generateWebpage(prompt, theme || undefined);
+      const result = await generateWebpage(prompt, theme || undefined, platform, model);
       
       // 存储HTML到sessionStorage
       sessionStorage.setItem('generatedHtml', result.html);
@@ -69,6 +71,36 @@ const HomePage: React.FC = () => {
             placeholder="例如：极简、现代、复古、暗色等"
             disabled={isLoading}
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="platform">平台选择</label>
+          <select
+            id="platform"
+            value={platform}
+            onChange={(e) => setPlatform(e.target.value)}
+            disabled={isLoading}
+          >
+            <option value="openrouter">OpenRouter</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="openai">OpenAI</option>
+          </select>
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="model">模型选择</label>
+          <select
+            id="model"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            disabled={isLoading}
+          >
+            <option value="deepseek/deepseek-chat-v3-0324:free">deepseek/deepseek-chat-v3-0324:free</option>
+            <option value="anthropic/claude-3.7-sonnet:thinking">Claude 3.7 Sonnet</option>
+            <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+            <option value="anthropic/claude-3-opus">Claude 3 Opus</option>
+            <option value="openai/gpt-4o">GPT-4o</option>
+          </select>
         </div>
         
         <button 

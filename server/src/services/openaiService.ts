@@ -13,7 +13,7 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
  * @param theme 可选的主题名称
  * @returns 生成的HTML内容
  */
-export const generateHtml = async (prompt: string, theme?: string): Promise<string> => {
+export const generateHtml = async (prompt: string, theme?: string, model?: string): Promise<string> => {
   try {
     // 构建系统提示词
     let systemPrompt = `你是一名专业的网页设计师和前端开发专家，对现代 Web 设计趋势和最佳实践有深入理解，尤其擅长创造具有极高审美价值的用户界面。你的设计作品不仅功能完备，而且在视觉上令人惊叹，能够给用户带来强烈的"Aha-moment"体验。
@@ -83,7 +83,7 @@ export const generateHtml = async (prompt: string, theme?: string): Promise<stri
     const response = await axios.post(
       OPENROUTER_API_URL, 
       {
-        model: 'anthropic/claude-3.7-sonnet:thinking', // 可以更换为其他支持的模型
+        model: model || 'anthropic/claude-3.7-sonnet:thinking', // 可以更换为其他支持的模型
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }

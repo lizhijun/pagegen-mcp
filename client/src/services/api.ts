@@ -5,11 +5,13 @@ import axios from 'axios';
 const API_BASE_URL = 'https://api.willwayai.com/api';
 
 // 网页生成API
-export const generateWebpage = async (prompt: string, theme?: string) => {
+export const generateWebpage = async (prompt: string, theme?: string, platform?: string, model?: string) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/generate`, {
       prompt,
-      theme
+      theme,
+      platform,
+      model
     });
     return response.data;
   } catch (error) {
