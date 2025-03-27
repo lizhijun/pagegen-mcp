@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { generateWebpage } from '../services/api';
+import { generateWebpage, generateWebpageStreaming } from '../services/api';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [theme, setTheme] = useState('');
-  const [platform, setPlatform] = useState('deepseek');
-  const [model, setModel] = useState('anthropic/claude-3.7-sonnet:thinking');
+  const [platform, setPlatform] = useState('openrouter');
+  const [model, setModel] = useState('deepseek/deepseek-chat-v3-0324:free');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [generationProgress, setGenerationProgress] = useState(0);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,12 +23,32 @@ const HomePage: React.FC = () => {
     
     setIsLoading(true);
     setError('');
+    setGenerationProgress(0);
     
     try {
-      const result = await generateWebpage(prompt, theme || undefined, platform, model);
-      
-      // 存储HTML到sessionStorage
-      sessionStorage.setItem('generatedHtml', result.html);
+      // 使用流式API生成网页
+      const result = await generateWebpageStreaming(
+        prompt, 
+        theme || undefined, 
+        platform, 
+        model,
+        // 进度回调
+        (html) => {
+          // 更新生成进度 (简单估算进度)
+          const progress = Math.min(95, Math.max(5, Math.floor(html.length / 100)));
+          setGenerationProgress(progress);
+        },
+        // 完成回调
+        (html) => {
+          setGenerationProgress(100);
+          // 存储HTML到sessionStorage
+          sessionStorage.setItem('generatedHtml', html);
+        },
+        // 错误回调
+        (errorMsg) => {
+          setError(errorMsg || '生成网页时出错，请重试');
+        }
+      );
       
       // 导航到预览页面
       navigate('/preview');
@@ -36,6 +57,7 @@ const HomePage: React.FC = () => {
       setError('生成网页时出错，请重试');
     } finally {
       setIsLoading(false);
+      setGenerationProgress(0);
     }
   };
 
@@ -102,6 +124,13 @@ const HomePage: React.FC = () => {
             <option value="openai/gpt-4o">GPT-4o</option>
           </select>
         </div>
+        
+        {isLoading && generationProgress > 0 && (
+          <div className="progress-container">
+            <div className="progress-bar" style={{ width: `${generationProgress}%` }}></div>
+            <div className="progress-text">{generationProgress < 100 ? '生成中...' : '完成！'}</div>
+          </div>
+        )}
         
         <button 
           type="submit"
