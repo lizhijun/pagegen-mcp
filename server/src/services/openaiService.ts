@@ -148,4 +148,125 @@ export const generateHtmlStreaming = async (content: string, res: Response, prom
     res.write(`data: ${JSON.stringify({ error: '初始化流失败' })}\n\n`);
     res.end();
   }
+};
+
+/**
+ * 发送聊天消息并获取回复
+ * @param messages 聊天消息数组，格式为 {role: 'user'|'assistant'|'system', content: string}[]
+ * @param model 使用的模型
+ * @returns AI回复的内容
+ */
+export const sendChatMessage = async (messages: Array<{role: string, content: string}>, model?: string): Promise<string> => {
+  try {
+    // 调用OpenRouter API
+    const response = await axios.post(
+      OPENROUTER_API_URL, 
+      {
+        model: model || 'anthropic/claude-3.7-sonnet:thinking',
+        messages: messages,
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'https://mcp-generator.com',
+          'X-Title': 'MCP Web Generator',
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
+    // 提取回复内容
+    const replyContent = response.data.choices[0]?.message?.content || '';
+    return replyContent;
+  } catch (error) {
+    console.error('OpenRouter Chat API调用失败:', error);
+    throw new Error('获取聊天回复时出错');
+  }
+};
+
+/**
+ * 流式发送聊天消息并直接写入响应流
+ * @param messages 聊天消息数组，格式为 {role: 'user'|'assistant'|'system', content: string}[]
+ * @param res Express响应对象，用于流式传输内容
+ * @param model 使用的模型
+ */
+export const sendChatMessageStreaming = async (messages: Array<{role: string, content: string}>, res: Response, model?: string): Promise<void> => {
+  try {
+    // 初始化内容收集器
+    let fullContent = '';
+    
+    try {
+      // 调用OpenRouter API并设置stream=true
+      const response = await axios.post(
+        OPENROUTER_API_URL, 
+        {
+          model: model || 'anthropic/claude-3.7-sonnet:thinking',
+          messages: messages,
+          temperature: 0.7,
+          stream: true, // 打开流式响应
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'HTTP-Referer': 'https://mcp-generator.com',
+            'X-Title': 'MCP Web Generator',
+            'Content-Type': 'application/json',
+          },
+          responseType: 'stream', // 设置响应类型为流
+        }
+      );
+
+      // 处理流式响应
+      response.data.on('data', (chunk: Buffer) => {
+        // 解析数据块
+        const lines = chunk.toString().split('\n');
+        for (const line of lines) {
+          // 只处理有效的数据行
+          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+            try {
+              // 尝试解析JSON，排除空行
+              const jsonStr = line.substring(6).trim();
+              if (!jsonStr) continue;
+              
+              const data = JSON.parse(jsonStr);
+              const content = data.choices?.[0]?.delta?.content || '';
+              if (content) {
+                fullContent += content;
+                
+                // 向客户端发送事件
+                res.write(`data: ${JSON.stringify({ message: fullContent })}\n\n`);
+              }
+            } catch (e) {
+              console.error('解析流式响应数据失败:', e, '原始数据:', line);
+              // 解析错误时继续处理下一行，而不是中断整个过程
+              continue;
+            }
+          }
+        }
+      });
+
+      // 处理流结束
+      response.data.on('end', () => {
+        // 发送完成事件
+        res.write(`data: ${JSON.stringify({ done: true, message: fullContent })}\n\n`);
+        res.end();
+      });
+      
+      // 处理错误
+      response.data.on('error', (err: Error) => {
+        console.error('流处理错误:', err);
+        res.write(`data: ${JSON.stringify({ error: '聊天过程中出错' })}\n\n`);
+        res.end();
+      });
+    } catch (error) {
+      console.error('OpenRouter Chat API流式调用失败:', error);
+      res.write(`data: ${JSON.stringify({ error: '调用API失败' })}\n\n`);
+      res.end();
+    }
+  } catch (error) {
+    console.error('OpenRouter聊天流式API调用准备阶段失败:', error);
+    res.write(`data: ${JSON.stringify({ error: '初始化聊天流失败' })}\n\n`);
+    res.end();
+  }
 }; 

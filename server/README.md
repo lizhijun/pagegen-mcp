@@ -131,4 +131,19 @@ pm2 restart pagegen-mcp
 5. 配置监控告警系统
 6. 确保所有敏感信息（如 API 密钥）都通过环境变量配置
 
+## API 文档
+
+### 主要API
+
+- **书籍API**: `/api/books` - 查询和搜索书籍信息
+- **生成API**: `/api/generate` - 使用AI生成HTML网页
+- **上传API**: `/api/upload` - 文件上传功能
+- **GitHub API**: `/api/github` - GitHub相关功能
+- **聊天API**: `/api/chat` - 与AI进行对话交互
+
+更详细的API使用方法，请参考：
+- [基本API文档](./API.md)
+- [聊天API详细文档](./docs/chat-api.md)
+- [生成API详细文档](./docs/generate-api.md)
+
 需要我详细解释任何步骤吗？或者你有其他具体的问题需要了解？
