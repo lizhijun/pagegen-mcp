@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { generateWebpage, generateWebpageStreaming } from '../services/api';
+import { generateWebpage, generateWebpageStreaming, getPromptTemplates, TemplateInfo } from '../services/api';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
   const [prompt, setPrompt] = useState('');
-  const [theme, setTheme] = useState('');
   const [platform, setPlatform] = useState('openrouter');
   const [model, setModel] = useState('deepseek/deepseek-chat-v3-0324:free');
+  const [promptTemplateId, setPromptTemplateId] = useState('standard');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [generationProgress, setGenerationProgress] = useState(0);
+  const [templates, setTemplates] = useState<TemplateInfo[]>([]);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,9 +30,10 @@ const HomePage: React.FC = () => {
       // 使用流式API生成网页
       const result = await generateWebpageStreaming(
         prompt, 
-        theme || undefined, 
+        undefined, 
         platform, 
         model,
+        promptTemplateId,
         // 进度回调
         (html) => {
           // 更新生成进度 (简单估算进度)
@@ -61,6 +63,15 @@ const HomePage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      const templates = await getPromptTemplates();
+      setTemplates(templates);
+    };
+
+    fetchTemplates();
+  }, []);
+
   return (
     <div className="homepage">
       <header>
@@ -84,17 +95,25 @@ const HomePage: React.FC = () => {
         </div>
         
         <div className="form-group">
-          <label htmlFor="theme">设计主题（可选）</label>
-          <input
-            type="text"
-            id="theme"
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-            placeholder="例如：极简、现代、复古、暗色等"
+          <label htmlFor="promptTemplate">设计模板</label>
+          <select
+            id="promptTemplate"
+            value={promptTemplateId}
+            onChange={(e) => setPromptTemplateId(e.target.value)}
             disabled={isLoading}
-          />
+          >
+            {templates.length === 0 ? (
+              <option value="standard">标准模板 - 专业美观的网页设计</option>
+            ) : (
+              templates.map(template => (
+                <option key={template.id} value={template.id}>
+                  {template.name} - {template.description}
+                </option>
+              ))
+            )}
+          </select>
         </div>
-
+        
         <div className="form-group">
           <label htmlFor="platform">平台选择</label>
           <select
